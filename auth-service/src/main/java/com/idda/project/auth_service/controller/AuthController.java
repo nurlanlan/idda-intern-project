@@ -1,7 +1,9 @@
+
 package com.idda.project.auth_service.controller;
 
 import com.idda.project.auth_service.dto.request.LoginRequest;
 import com.idda.project.auth_service.dto.request.RegisterRequest;
+import com.idda.project.auth_service.dto.response.LoginResponse;
 import com.idda.project.auth_service.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        authService.login(request);
-        return ResponseEntity.ok("Login successful");
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")

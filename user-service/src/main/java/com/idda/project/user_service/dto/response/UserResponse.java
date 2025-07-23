@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class UserResponse {
+    private Long id;
     private String fullName;
     private String email;
-    private Long id;
-    private boolean valid;
-    private String message;
+    private int age;
+    private String address;
 }

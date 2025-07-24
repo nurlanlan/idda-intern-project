@@ -3,6 +3,8 @@ package entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.YearMonth;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -33,7 +35,7 @@ public class Card {
     private boolean isActive;
 
     @Column(nullable = false)
-    private String expirationDate;
+    private YearMonth expirationDate;
 
 
 }

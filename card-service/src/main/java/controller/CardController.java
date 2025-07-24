@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/cards") // Bütün endpointlər üçün ümumi prefix
+@RequestMapping("/api/cards")
 @RequiredArgsConstructor
 public class CardController {
 

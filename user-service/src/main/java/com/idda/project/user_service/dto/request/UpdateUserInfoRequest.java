@@ -7,4 +7,5 @@ import lombok.Data;
 public class UpdateUserInfoRequest {
     private String fullName;
     private String address;
+    private Integer age;
 }

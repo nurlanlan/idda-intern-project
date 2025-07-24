@@ -17,22 +17,51 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponse updateUserInfo(Long id, UpdateUserInfoRequest request) {
+    public UserResponse updateUserFullName(Long id, UpdateUserInfoRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setFullName(request.getFullName());
-        user.setAddress(request.getAddress());
 
         User updatedUser = userRepository.save(user);
         return mapToResponse(updatedUser);
     }
 
     @Override
+    public UserResponse updateUserAddress(Long id, UpdateUserInfoRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setAddress(request.getAddress());
+
+        User updatedUser = userRepository.save(user);
+        return mapToResponse(updatedUser);
+    }
+
+
+    @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return mapToResponse(user);
+    }
+
+    public UserResponse updateInfo (Long id, UpdateUserInfoRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
+        if (request.getAge() != null) {
+            user.setAge(request.getAge());
+        }
+
+        User updatedUser = userRepository.save(user);
+        return mapToResponse(updatedUser);
     }
 
     private UserResponse mapToResponse(User user) {

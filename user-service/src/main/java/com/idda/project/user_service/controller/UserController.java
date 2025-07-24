@@ -18,12 +18,28 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PutMapping("/{id}")
+//    @PutMapping("/{id}/full-name")
+//    public ResponseEntity<UserResponse> updateUserFullName(
+//            @PathVariable Long id,
+//            @RequestBody UpdateUserInfoRequest request
+//    ) {
+//        return ResponseEntity.ok(userService.updateUserFullName(id, request));
+//    }
+//
+//    @PutMapping("/{id}/address")
+//    public ResponseEntity<UserResponse> updateUserAddress(
+//            @PathVariable Long id,
+//            @RequestBody UpdateUserInfoRequest request
+//    ) {
+//        return ResponseEntity.ok(userService.updateUserAddress(id, request));
+//    }
+
+    @PatchMapping("/{id}/info")
     public ResponseEntity<UserResponse> updateUserInfo(
             @PathVariable Long id,
             @RequestBody UpdateUserInfoRequest request
     ) {
-        return ResponseEntity.ok(userService.updateUserInfo(id, request));
+        return ResponseEntity.ok(userService.updateInfo(id, request));
     }
 
     @GetMapping("/{id}")

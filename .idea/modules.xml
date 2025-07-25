@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/card-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/card-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/card-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/card-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/idda-intern-project.iml" filepath="$PROJECT_DIR$/.idea/idda-intern-project.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/service-registry.main.iml" filepath="$PROJECT_DIR$/.idea/modules/service-registry.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service.main.iml" />

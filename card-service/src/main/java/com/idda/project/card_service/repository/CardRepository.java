@@ -1,6 +1,6 @@
-package repository;
+package com.idda.project.card_service.repository;
 
-import entity.Card;
+import com.idda.project.card_service.entity.Card;
 
 import java.util.List;
 import java.util.Optional;

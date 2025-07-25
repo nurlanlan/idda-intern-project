@@ -1,14 +1,14 @@
-package service.impl;
+package com.idda.project.card_service.service.impl;
 
-import dto.request.AddCardRequest;
-import dto.response.CardResponse;
-import entity.Card;
+import com.idda.project.card_service.dto.request.AddCardRequest;
+import com.idda.project.card_service.dto.response.CardResponse;
+import com.idda.project.card_service.entity.Card;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import repository.CardRepository;
-import service.CardService;
-import service.EncryptionService;
+import com.idda.project.card_service.repository.CardRepository;
+import com.idda.project.card_service.service.CardService;
+import com.idda.project.card_service.service.EncryptionService;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;

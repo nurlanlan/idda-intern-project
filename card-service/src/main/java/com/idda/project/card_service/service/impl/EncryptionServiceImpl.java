@@ -1,8 +1,9 @@
-package service.impl;
+package com.idda.project.card_service.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import service.EncryptionService;
+import com.idda.project.card_service.service.EncryptionService;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,6 +18,7 @@ public class EncryptionServiceImpl implements EncryptionService {
     private static final String ALGORITHM = "AES";
     private Key secretKey;
 
+    @PostConstruct
     public void init() {
         byte[] keyBytes = secretKeyString.getBytes(StandardCharsets.UTF_8);
         this.secretKey = new SecretKeySpec(keyBytes, ALGORITHM);

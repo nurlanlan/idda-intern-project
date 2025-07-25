@@ -1,13 +1,13 @@
-package controller;
+package com.idda.project.card_service.controller;
 
 
-import dto.request.AddCardRequest;
-import dto.response.CardResponse;
+import com.idda.project.card_service.service.CardService;
+import com.idda.project.card_service.dto.request.AddCardRequest;
+import com.idda.project.card_service.dto.response.CardResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.CardService;
 
 import java.util.List;
 

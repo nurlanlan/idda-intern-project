@@ -1,10 +1,9 @@
-package service;
+package com.idda.project.card_service.service;
 
-import dto.request.AddCardRequest;
-import dto.response.CardResponse;
+import com.idda.project.card_service.dto.request.AddCardRequest;
+import com.idda.project.card_service.dto.response.CardResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CardService {
     CardResponse addCard(AddCardRequest addCardRequest);

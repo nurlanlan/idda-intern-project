@@ -1,4 +1,4 @@
-package entity;
+package com.idda.project.card_service.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

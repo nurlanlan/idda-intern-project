@@ -1,4 +1,4 @@
-package dto.request;
+package com.idda.project.card_service.dto.request;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package service;
+package com.idda.project.card_service.service;
 
 
 public interface EncryptionService {

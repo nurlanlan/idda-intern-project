@@ -1,4 +1,4 @@
-package com.idda.project.user_service.entity;
+package com.idda.project.user_service.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,12 +14,10 @@ public class User {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int age;
     private String fullName;
-    private String email;
     private String address;
 
 }

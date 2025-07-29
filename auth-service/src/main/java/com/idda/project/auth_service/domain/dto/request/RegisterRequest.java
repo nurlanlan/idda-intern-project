@@ -1,4 +1,4 @@
-package com.idda.project.auth_service.dto.request;
+package com.idda.project.auth_service.domain.dto.request;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.idda.project.auth_service.entity;
+package com.idda.project.auth_service.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

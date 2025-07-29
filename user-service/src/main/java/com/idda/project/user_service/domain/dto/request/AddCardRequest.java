@@ -1,4 +1,4 @@
-package com.idda.project.user_service.dto.request;
+package com.idda.project.user_service.domain.dto.request;
 
 import lombok.Data;
 import jakarta.validation.constraints.*;

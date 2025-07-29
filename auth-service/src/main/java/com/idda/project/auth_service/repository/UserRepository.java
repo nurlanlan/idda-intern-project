@@ -1,6 +1,6 @@
 package com.idda.project.auth_service.repository;
 
-import com.idda.project.auth_service.entity.User;
+import com.idda.project.auth_service.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

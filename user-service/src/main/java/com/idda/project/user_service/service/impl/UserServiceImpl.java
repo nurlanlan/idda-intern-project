@@ -1,8 +1,8 @@
 package com.idda.project.user_service.service.impl;
 
-import com.idda.project.user_service.dto.request.UpdateUserInfoRequest;
-import com.idda.project.user_service.dto.response.UserResponse;
-import com.idda.project.user_service.entity.User;
+import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
+import com.idda.project.user_service.domain.dto.response.UserResponse;
+import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.repository.UserRepository;
 import com.idda.project.user_service.service.UserService;
 import lombok.AllArgsConstructor;

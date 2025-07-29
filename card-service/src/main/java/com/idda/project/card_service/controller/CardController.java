@@ -20,7 +20,7 @@ public class CardController {
     private final CardService cardService;
 
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<CardResponse> addCard(@RequestBody AddCardRequest addCardRequest) {
         CardResponse newCard = cardService.addCard(addCardRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCard);

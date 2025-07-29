@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class UpdateUserInfoRequest {
-    private String fullName;
     private String address;
-    private Integer age;
+    private Boolean gender;
 }

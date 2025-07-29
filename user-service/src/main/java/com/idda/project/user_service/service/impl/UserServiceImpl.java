@@ -1,12 +1,18 @@
 package com.idda.project.user_service.service.impl;
 
+import com.idda.project.user_service.config.WebClientConfig;
+import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
+import com.idda.project.user_service.domain.dto.response.CardResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
 import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.repository.UserRepository;
 import com.idda.project.user_service.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 
 @Service
@@ -14,29 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-
-    @Override
-    public UserResponse updateUserFullName(Long id, UpdateUserInfoRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setFullName(request.getFullName());
-
-        User updatedUser = userRepository.save(user);
-        return mapToResponse(updatedUser);
-    }
-
-    @Override
-    public UserResponse updateUserAddress(Long id, UpdateUserInfoRequest request) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setAddress(request.getAddress());
-
-        User updatedUser = userRepository.save(user);
-        return mapToResponse(updatedUser);
-    }
+    private final WebClient.Builder webClientBuilder;
 
 
     @Override
@@ -46,18 +30,45 @@ public class UserServiceImpl implements UserService {
         return mapToResponse(user);
     }
 
-    public UserResponse updateInfo (Long id, UpdateUserInfoRequest request) {
+    @Override
+    public CardResponse addCardForUser(Long userId, AddCardRequest request) {
+        AddCardRequest requestForCardService = new AddCardRequest();
+        requestForCardService.setUserId(userId);
+        requestForCardService.setCardNumber(request.getCardNumber());
+        requestForCardService.setCvv(request.getCvv());
+        requestForCardService.setExpirationDate(request.getExpirationDate());
+        requestForCardService.setBalance(request.getBalance());
+
+        return webClientBuilder.build()
+                .post()
+                .uri("http://localhost:8083/api/cards/add")
+                .bodyValue(requestForCardService)
+                .retrieve()
+                .bodyToMono(CardResponse.class)
+                .block();
+    }
+
+    @Override
+    public List<CardResponse> getCardsForUser(Long userId) {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://localhost:8083/api/cards", uriBuilder ->
+                        uriBuilder.queryParam("userId", userId).build())
+                .retrieve()
+                .bodyToFlux(CardResponse.class)
+                .collectList()
+                .block();
+    }
+
+    public UserResponse updateInfo(Long id, UpdateUserInfoRequest request) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (request.getFullName() != null) {
-            user.setFullName(request.getFullName());
-        }
         if (request.getAddress() != null) {
             user.setAddress(request.getAddress());
         }
-        if (request.getAge() != null) {
-            user.setAge(request.getAge());
+        if (request.getGender() != null) {
+            user.setGender(request.getGender());
         }
 
         User updatedUser = userRepository.save(user);
@@ -68,7 +79,7 @@ public class UserServiceImpl implements UserService {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
         response.setFullName(user.getFullName());
-        response.setAge(user.getAge());
+        response.setGender(user.getGender());
         response.setAddress(user.getAddress());
         return response;
     }

@@ -16,8 +16,8 @@ public class User {
     @Id
     private Long id;
 
-    private int age;
     private String fullName;
     private String address;
+    private Boolean gender;
 
 }

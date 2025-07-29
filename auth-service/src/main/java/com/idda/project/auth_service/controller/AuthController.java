@@ -1,10 +1,10 @@
 
 package com.idda.project.auth_service.controller;
 
-import com.idda.project.auth_service.dto.request.LoginRequest;
-import com.idda.project.auth_service.dto.request.RegisterRequest;
-import com.idda.project.auth_service.dto.response.LoginResponse;
-import com.idda.project.auth_service.service.AuthService;
+import com.idda.project.auth_service.domain.dto.request.LoginRequest;
+import com.idda.project.auth_service.domain.dto.request.RegisterRequest;
+import com.idda.project.auth_service.domain.dto.response.LoginResponse;
+import com.idda.project.auth_service.service.AuthServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class    AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthServiceImpl authService) {
         this.authService = authService;
     }
 

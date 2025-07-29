@@ -68,7 +68,6 @@ public class UserServiceImpl implements UserService {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
         response.setFullName(user.getFullName());
-        response.setEmail(user.getEmail());
         response.setAge(user.getAge());
         response.setAddress(user.getAddress());
         return response;

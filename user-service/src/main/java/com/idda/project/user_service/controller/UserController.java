@@ -3,6 +3,7 @@ package com.idda.project.user_service.controller;
 import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
 import com.idda.project.user_service.domain.dto.response.CardResponse;
+import com.idda.project.user_service.domain.dto.response.ProductResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
 import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.service.UserService;
@@ -92,5 +93,10 @@ public class UserController {
 //        User userDetails = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
 //        return userDetails.getId();
 //    }
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        List<ProductResponse> products = userService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
 
 }

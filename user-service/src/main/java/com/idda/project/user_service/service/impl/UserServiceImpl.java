@@ -4,6 +4,7 @@ import com.idda.project.user_service.config.WebClientConfig;
 import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
 import com.idda.project.user_service.domain.dto.response.CardResponse;
+import com.idda.project.user_service.domain.dto.response.ProductResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
 import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.repository.UserRepository;
@@ -56,6 +57,17 @@ public class UserServiceImpl implements UserService {
                         uriBuilder.queryParam("userId", userId).build())
                 .retrieve()
                 .bodyToFlux(CardResponse.class)
+                .collectList()
+                .block();
+    }
+
+    @Override
+    public List<ProductResponse> getAllProducts() {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://localhost:8084/api/products/available")
+                .retrieve()
+                .bodyToFlux(ProductResponse.class)
                 .collectList()
                 .block();
     }

@@ -1,9 +1,11 @@
 package com.idda.project.product_service.service.impl;
 
+import com.idda.project.product_service.dto.request.DecreaseStockRequest;
 import com.idda.project.product_service.dto.response.ProductResponse;
 import com.idda.project.product_service.entity.Product;
 import com.idda.project.product_service.repository.ProductRepository;
 import com.idda.project.product_service.service.ProductService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,15 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
         return convertToDTO(product);
+    }
+
+    @Override
+    @Transactional
+    public void decreaseProductStock(DecreaseStockRequest request) {
+        int updatedRows = productRepository.decreaseStock(request.getProductId(), request.getQuantity());
+        if (updatedRows == 0) {
+            throw new RuntimeException("Failed to decrease stock, not enough items for product id: " + request.getProductId());
+        }
     }
 
     private ProductResponse convertToDTO(Product product) {

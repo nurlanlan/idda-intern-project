@@ -1,4 +1,4 @@
-package com.idda.project.payment_service.dto.response;
+package com.idda.project.user_service.domain.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

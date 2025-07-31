@@ -1,7 +1,9 @@
 package com.idda.project.product_service.controller;
 
+import com.idda.project.product_service.dto.request.DecreaseStockRequest;
 import com.idda.project.product_service.dto.response.ProductResponse;
 import com.idda.project.product_service.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,12 @@ public class ProductController {
     public ResponseEntity<ProductResponse> getProductById(@PathVariable long productId) {
         ProductResponse product = productService.getProductById(productId);
         return ResponseEntity.ok(product);
+    }
+
+    @PostMapping("/decrease-stock")
+    public ResponseEntity<Void> decreaseStock(@Valid @RequestBody DecreaseStockRequest request) {
+        productService.decreaseProductStock(request);
+        return ResponseEntity.ok().build();
     }
 
 }

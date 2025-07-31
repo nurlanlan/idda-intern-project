@@ -5,6 +5,7 @@ import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
 import com.idda.project.user_service.domain.dto.response.CardResponse;
 import com.idda.project.user_service.domain.dto.response.ProductResponse;
+import com.idda.project.user_service.domain.dto.response.TransactionResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
 import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.repository.UserRepository;
@@ -68,6 +69,17 @@ public class UserServiceImpl implements UserService {
                 .uri("http://localhost:8084/api/products/available")
                 .retrieve()
                 .bodyToFlux(ProductResponse.class)
+                .collectList()
+                .block();
+    }
+
+    @Override
+    public List<TransactionResponse> getTransactionHistory(Long userId) {
+        return webClientBuilder.build()
+                .get()
+                .uri("http://localhost:8085/api/payments/history?userId={userId}", userId)
+                .retrieve()
+                .bodyToFlux(TransactionResponse.class)
                 .collectList()
                 .block();
     }

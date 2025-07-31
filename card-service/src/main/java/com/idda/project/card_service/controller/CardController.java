@@ -1,9 +1,11 @@
 package com.idda.project.card_service.controller;
 
 
+import com.idda.project.card_service.dto.request.DebitRequest;
 import com.idda.project.card_service.service.CardService;
 import com.idda.project.card_service.dto.request.AddCardRequest;
 import com.idda.project.card_service.dto.response.CardResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +40,19 @@ public class CardController {
     public ResponseEntity<Void> deleteCard(@PathVariable Long cardId, @RequestParam Long userId) {
         cardService.deleteCard(cardId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{cardId}")
+    public ResponseEntity<CardResponse> getCardDetails(
+            @PathVariable Long cardId,
+            @RequestParam Long userId) {
+        CardResponse card = cardService.getCardByIdAndUserId(cardId, userId);
+        return ResponseEntity.ok(card);
+    }
+
+    @PostMapping("/debit")
+    public ResponseEntity<Void> debit(@Valid @RequestBody DebitRequest request) {
+        cardService.debitCardBalance(request);
+        return ResponseEntity.ok().build();
     }
 }

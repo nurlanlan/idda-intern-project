@@ -4,6 +4,7 @@ import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
 import com.idda.project.user_service.domain.dto.response.CardResponse;
 import com.idda.project.user_service.domain.dto.response.ProductResponse;
+import com.idda.project.user_service.domain.dto.response.TransactionResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
 import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.service.UserService;
@@ -97,6 +98,12 @@ public class UserController {
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> products = userService.getAllProducts();
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/{userId}/transactions")
+    public ResponseEntity<List<TransactionResponse>> getTransactionHistory(@PathVariable Long userId) {
+        List<TransactionResponse> transactions = userService.getTransactionHistory(userId);
+        return ResponseEntity.ok(transactions);
     }
 
 }

@@ -1,8 +1,10 @@
 package com.idda.project.card_service.service.impl;
 
 import com.idda.project.card_service.dto.request.AddCardRequest;
+import com.idda.project.card_service.dto.request.DebitRequest;
 import com.idda.project.card_service.dto.response.CardResponse;
 import com.idda.project.card_service.entity.Card;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,29 @@ public class CardServiceImpl implements CardService {
 
         cardRepository.delete(card);
 
+    }
+
+    @Override
+    @Transactional
+    public CardResponse getCardByIdAndUserId(Long cardId, Long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new EntityNotFoundException("Card not found with id: " + cardId));
+
+        if (!card.getUserId().equals(userId)) {
+            throw new SecurityException("User does not have permission to access this card.");
+        }
+
+        return convertToResponseDTO(card);
+    }
+
+    @Override
+    @Transactional
+    public void debitCardBalance(DebitRequest request) {
+        int updatedRows = cardRepository.debitBalance(request.getCardId(), request.getAmount());
+
+        if (updatedRows == 0) {
+            throw new RuntimeException("Insufficient funds or card not found for id: " + request.getCardId());
+        }
     }
 
     private CardResponse convertToResponseDTO(Card card) {

@@ -1,6 +1,6 @@
 package com.idda.project.payment_service.controller;
 
-
+import com.idda.project.payment_service.dto.client.PurchaseClientRequest;
 import com.idda.project.payment_service.dto.request.PurchaseRequestDTO;
 import com.idda.project.payment_service.dto.response.PurchaseResponseDTO;
 import com.idda.project.payment_service.dto.response.TransactionResponse;
@@ -26,9 +26,17 @@ public class PaymentController {
     }
 
     @PostMapping("/purchase")
-    public ResponseEntity<PurchaseResponseDTO> purchaseProduct(@Valid @RequestBody PurchaseRequestDTO request) {
-        PurchaseResponseDTO response = paymentService.processPurchase(request);
+    public ResponseEntity<PurchaseResponseDTO> purchaseProduct(
+            @RequestHeader("X-User-Id") Long userId,
+            @Valid @RequestBody PurchaseClientRequest clientRequest) {
+
+        PurchaseRequestDTO serviceRequest = new PurchaseRequestDTO();
+        serviceRequest.setUserId(userId);
+        serviceRequest.setProductId(clientRequest.getProductId());
+        serviceRequest.setCardId(clientRequest.getCardId());
+        serviceRequest.setQuantity(clientRequest.getQuantity());
+
+        PurchaseResponseDTO response = paymentService.processPurchase(serviceRequest);
         return ResponseEntity.ok(response);
     }
-
 }

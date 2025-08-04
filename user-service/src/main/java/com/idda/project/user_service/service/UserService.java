@@ -6,6 +6,7 @@ import com.idda.project.user_service.domain.dto.response.CardResponse;
 import com.idda.project.user_service.domain.dto.response.ProductResponse;
 import com.idda.project.user_service.domain.dto.response.TransactionResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface UserService {
     List<ProductResponse> getAllProducts();
 
     List<TransactionResponse> getTransactionHistory(Long userId);
+
+    void deleteCard(Long userId, Long cardId);
 }

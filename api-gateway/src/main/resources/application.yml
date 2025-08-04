@@ -1,6 +1,13 @@
 server:
   port: 8080
 
+jwt:
+  secret: ee1f5014e7ef2f84d1b179cf7533e31e
+
+logging:
+  level:
+    com.idda.project.api_gateway.filter: DEBUG
+
 #spring:
 #  application:
 #    name: api-gateway
@@ -33,8 +40,6 @@ server:
 #        - id: payment-service-route
 #          uri: http://localhost:8085
 #          predicates:
+#
+#
 #            - Path=/api/payments/**
-
-
-jwt:
-  secret: ee1f5014e7ef2f84d1b179cf7533e31e

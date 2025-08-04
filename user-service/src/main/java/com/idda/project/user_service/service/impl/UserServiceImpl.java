@@ -1,6 +1,5 @@
 package com.idda.project.user_service.service.impl;
 
-import com.idda.project.user_service.config.WebClientConfig;
 import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
 import com.idda.project.user_service.domain.dto.response.CardResponse;
@@ -11,6 +10,7 @@ import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.repository.UserRepository;
 import com.idda.project.user_service.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         return webClientBuilder.build()
                 .post()
-                .uri("http://localhost:8083/api/cards/add")
+                .uri("http://localhost:8083/api/cards")
                 .bodyValue(requestForCardService)
                 .retrieve()
                 .bodyToMono(CardResponse.class)
@@ -83,6 +83,24 @@ public class UserServiceImpl implements UserService {
                 .collectList()
                 .block();
     }
+
+    @Override
+    public void deleteCard(Long userId, Long cardId) {
+        webClientBuilder.build()
+                .delete()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host("localhost")
+                        .port(8083)
+                        .path("/api/cards/{cardId}") // PathVariable-ı burada təyin edirik
+                        .queryParam("userId", userId) // QueryParam-ı isə burada
+                        .build(cardId)) // .build() metodu {cardId} yerinə dəyəri qoyur
+                .retrieve()
+                .toBodilessEntity()
+                .block(); // block() ResponseEntity<Void> qaytarır, onu return etməyə ehtiyac yoxdur.
+    }
+
+
 
     public UserResponse updateInfo(Long id, UpdateUserInfoRequest request) {
         User user = userRepository.findById(id)

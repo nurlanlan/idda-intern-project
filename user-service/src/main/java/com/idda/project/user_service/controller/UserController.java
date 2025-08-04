@@ -6,9 +6,7 @@ import com.idda.project.user_service.domain.dto.response.CardResponse;
 import com.idda.project.user_service.domain.dto.response.ProductResponse;
 import com.idda.project.user_service.domain.dto.response.TransactionResponse;
 import com.idda.project.user_service.domain.dto.response.UserResponse;
-import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.service.UserService;
-import com.idda.project.user_service.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,94 +14,64 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import java.security.Principal;
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-
     private final UserService userService;
 
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-//    @PutMapping("/{id}/full-name")
-//    public ResponseEntity<UserResponse> updateUserFullName(
-//            @PathVariable Long id,
-//            @RequestBody UpdateUserInfoRequest request
-//    ) {
-//        return ResponseEntity.ok(userService.updateUserFullName(id, request));
-//    }
-//
-//    @PutMapping("/{id}/address")
-//    public ResponseEntity<UserResponse> updateUserAddress(
-//            @PathVariable Long id,
-//            @RequestBody UpdateUserInfoRequest request
-//    ) {
-//        return ResponseEntity.ok(userService.updateUserAddress(id, request));
-//    }
 
-    @PatchMapping("/{id}/info")
-    public ResponseEntity<UserResponse> updateUserInfo(
-            @PathVariable Long id,
+    @GetMapping("/me/profile")
+    public ResponseEntity<UserResponse> getMyProfile(@RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(userService.getUserById(userId));
+    }
+
+    @PatchMapping("/me/profile")
+    public ResponseEntity<UserResponse> updateMyProfile(
+            @RequestHeader("X-User-Id") Long userId,
             @RequestBody UpdateUserInfoRequest request
     ) {
-        return ResponseEntity.ok(userService.updateInfo(id, request));
+        return ResponseEntity.ok(userService.updateInfo(userId, request));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
 
-//    @PostMapping("/me/cards")
-//    public ResponseEntity<CardResponse> addCard(@Valid @RequestBody AddCardRequest request, Principal principal) {
-//        Long userId = getUserIdFromPrincipal(principal); // Bu, sizin təhlükəsizlik məntiqinizdən asılıdır
-//
-//        CardResponse createdCard = userService.addCardForUser(userId, request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdCard);
-//    }
-
-    @PostMapping("/{userId}/cards")   // Burada userId-ni URL-də alırıq -TEST ucun
-    public ResponseEntity<CardResponse> addCardForUser(
-            @PathVariable Long userId,
+    @PostMapping("/me/cards")
+    public ResponseEntity<CardResponse> addMyCard(
+            @RequestHeader("X-User-Id") Long userId,
             @Valid @RequestBody AddCardRequest request) {
 
         CardResponse createdCard = userService.addCardForUser(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCard);
     }
 
-//    @GetMapping("/me/cards")
-//    public ResponseEntity<List<CardResponse>> getCards(Principal principal) {
-//        Long userId = getUserIdFromPrincipal(principal);
-//
-//        List<CardResponse> cards = userService.getCardsForUser(userId);
-//        return ResponseEntity.ok(cards);
-//    }
+    @DeleteMapping("/me/cards/{cardId}")
+    public ResponseEntity<Void> deleteMyCard(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long cardId) {
+        userService.deleteCard(userId, cardId);
+        return ResponseEntity.noContent().build();
+    }
 
-    @GetMapping("/{userId}/cards")   // Burada userId-ni URL-də alırıq -TEST ucun
-    public ResponseEntity<List<CardResponse>> getCardsForUser(@PathVariable Long userId) {
-
+    @GetMapping("/me/cards")
+    public ResponseEntity<List<CardResponse>> getMyCards(@RequestHeader("X-User-Id") Long userId) {
         List<CardResponse> cards = userService.getCardsForUser(userId);
         return ResponseEntity.ok(cards);
     }
 
-//    private Long getUserIdFromPrincipal(Principal principal) {
-//        User userDetails = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-//        return userDetails.getId();
-//    }
+
+    @GetMapping("/me/transactions")
+    public ResponseEntity<List<TransactionResponse>> getMyTransactionHistory(@RequestHeader("X-User-Id") Long userId) {
+        List<TransactionResponse> transactions = userService.getTransactionHistory(userId);
+        return ResponseEntity.ok(transactions);
+    }
+
     @GetMapping("/products")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
         List<ProductResponse> products = userService.getAllProducts();
         return ResponseEntity.ok(products);
     }
-
-    @GetMapping("/{userId}/transactions")
-    public ResponseEntity<List<TransactionResponse>> getTransactionHistory(@PathVariable Long userId) {
-        List<TransactionResponse> transactions = userService.getTransactionHistory(userId);
-        return ResponseEntity.ok(transactions);
-    }
-
 }

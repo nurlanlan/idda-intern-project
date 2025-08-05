@@ -66,7 +66,6 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        // DƏYİŞİKLİK: Artıq bütün user obyektini ötürürük
         String accessToken = jwtUtil.generateToken(user, true);
         String refreshToken = jwtUtil.generateToken(user, false);
 

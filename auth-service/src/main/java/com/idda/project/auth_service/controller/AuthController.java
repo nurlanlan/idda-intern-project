@@ -5,6 +5,7 @@ import com.idda.project.auth_service.domain.dto.request.LoginRequest;
 import com.idda.project.auth_service.domain.dto.request.RegisterRequest;
 import com.idda.project.auth_service.domain.dto.response.LoginResponse;
 import com.idda.project.auth_service.service.AuthServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-public class    AuthController {
+public class AuthController {
 
     private final AuthServiceImpl authService;
 
@@ -23,15 +24,15 @@ public class    AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-        LoginResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 }

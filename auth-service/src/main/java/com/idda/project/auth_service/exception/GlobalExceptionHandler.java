@@ -39,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",
                 errors.toString(),
-                request.getDescription(false).substring(4) // "uri=" prefiksini kəsirik
+                request.getDescription(false).substring(4)
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }

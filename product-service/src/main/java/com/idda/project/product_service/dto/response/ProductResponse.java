@@ -7,5 +7,5 @@ public class ProductResponse {
     private long id;
     private String productName;
     private int stock;
-    private float price;
+    private int price;
 }

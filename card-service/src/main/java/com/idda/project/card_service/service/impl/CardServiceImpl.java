@@ -4,6 +4,7 @@ import com.idda.project.card_service.dto.request.AddCardRequest;
 import com.idda.project.card_service.dto.request.DebitRequest;
 import com.idda.project.card_service.dto.response.CardResponse;
 import com.idda.project.card_service.entity.Card;
+import com.idda.project.card_service.exception.DuplicateResourceException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import com.idda.project.card_service.repository.CardRepository;
 import com.idda.project.card_service.service.CardService;
 import com.idda.project.card_service.service.EncryptionService;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,7 +31,7 @@ public class CardServiceImpl implements CardService {
     public CardResponse addCard(AddCardRequest addCardRequest) {
         String encryptedCardNumber = encryptionService.encrypt(addCardRequest.getCardNumber());
         cardRepository.findByEncryptedCardNumber(encryptedCardNumber).ifPresent(card -> {
-            throw new RuntimeException("Card already exists");
+            throw new DuplicateResourceException("Card with this number already exists.");
         });
         Card card = new Card();
         card.setUserId(addCardRequest.getUserId());
@@ -62,7 +64,7 @@ public class CardServiceImpl implements CardService {
                 .orElseThrow(() -> new RuntimeException("Card not found"));
 
         if (!card.getUserId().equals(userId)) {
-            throw new RuntimeException("Unauthorized action");
+            throw new SecurityException("User does not have permission to delete this card.");
         }
 
         cardRepository.delete(card);

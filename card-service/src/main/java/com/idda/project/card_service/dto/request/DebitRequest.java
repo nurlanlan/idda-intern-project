@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class DebitRequest {
     @NotNull
@@ -11,5 +13,5 @@ public class DebitRequest {
 
     @NotNull
     @Positive(message = "Amount must be positive")
-    private float amount;
+    private BigDecimal amount;
 }

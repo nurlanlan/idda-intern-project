@@ -3,6 +3,7 @@ package com.idda.project.card_service.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -26,7 +27,7 @@ public class Card {
     private String encryptedCvv;
 
     @Column(nullable = false)
-    private float balance;
+    private BigDecimal balance;
 
     @Column(nullable = false)
     private boolean isPrimary;

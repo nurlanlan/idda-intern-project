@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,6 +16,6 @@ public class TransactionResponse {
     private String productName;
     private String maskedCardNumber;
     private int quantity;
-    private float amount;
+    private BigDecimal amount;
     private LocalDateTime transactionTimestamp;
 }

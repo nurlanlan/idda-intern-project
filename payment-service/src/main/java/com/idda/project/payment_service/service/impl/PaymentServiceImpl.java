@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,10 +61,13 @@ public class PaymentServiceImpl implements PaymentService {
             throw new RuntimeException("Card not found or inactive");
         }
 
-        float totalAmount = product.getPrice() * request.getQuantity();
-        if (card.getBalance() < totalAmount) {
+        BigDecimal totalAmount = product.getPrice()
+                .multiply(BigDecimal.valueOf(request.getQuantity()));
+
+        if (card.getBalance().compareTo(totalAmount) < 0) {
             throw new RuntimeException("Insufficient funds on the card!");
         }
+
 
         webClientBuilder.build().post()
                 .uri("http://localhost:8083/api/cards/debit")

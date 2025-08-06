@@ -2,6 +2,7 @@ package com.idda.project.card_service.repository;
 
 import com.idda.project.card_service.entity.Card;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     @Modifying
     @Query("UPDATE Card c SET c.balance = c.balance - :amount WHERE c.id = :cardId AND c.balance >= :amount")
-    int debitBalance(Long cardId, float amount);
+    int debitBalance(Long cardId, BigDecimal amount);
 
     Optional<Card> findByUserIdAndIsActive(Long userId, boolean isActive);
 

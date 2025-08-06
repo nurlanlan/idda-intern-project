@@ -1,5 +1,6 @@
 package com.idda.project.user_service.service.impl;
 
+import com.idda.project.user_service.domain.dto.client.AddCardToCardServiceRequest;
 import com.idda.project.user_service.domain.dto.request.AddCardRequest;
 import com.idda.project.user_service.domain.dto.request.UpdateUserInfoRequest;
 import com.idda.project.user_service.domain.dto.response.CardResponse;
@@ -10,15 +11,19 @@ import com.idda.project.user_service.domain.entity.User;
 import com.idda.project.user_service.repository.UserRepository;
 import com.idda.project.user_service.service.UserService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -34,20 +39,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CardResponse addCardForUser(Long userId, AddCardRequest request) {
-        AddCardRequest requestForCardService = new AddCardRequest();
-        requestForCardService.setUserId(userId);
-        requestForCardService.setCardNumber(request.getCardNumber());
-        requestForCardService.setCvv(request.getCvv());
-        requestForCardService.setExpirationDate(request.getExpirationDate());
-        requestForCardService.setBalance(request.getBalance());
+        AddCardToCardServiceRequest addCardToCardServiceRequest = new AddCardToCardServiceRequest();
+        addCardToCardServiceRequest.setUserId(userId);
+        addCardToCardServiceRequest.setCardNumber(request.getCardNumber());
+        addCardToCardServiceRequest.setCvv(request.getCvv());
+        addCardToCardServiceRequest.setExpirationDate(request.getExpirationDate());
+        addCardToCardServiceRequest.setBalance(request.getBalance());
 
-        return webClientBuilder.build()
-                .post()
-                .uri("http://localhost:8083/api/cards")
-                .bodyValue(requestForCardService)
-                .retrieve()
-                .bodyToMono(CardResponse.class)
-                .block();
+        try {
+            return webClientBuilder.build()
+                    .post()
+                    .uri("http://localhost:8083/api/cards")
+                    .bodyValue(addCardToCardServiceRequest)
+                    .retrieve()
+                    .bodyToMono(CardResponse.class)
+                    .block();
+        } catch (WebClientResponseException ex) {
+            log.error("Error response from Card Service. Status: {}, Body: {}", ex.getStatusCode(), ex.getResponseBodyAsString());
+
+            throw new ResponseStatusException(ex.getStatusCode(), "Error from Card Service: " + ex.getResponseBodyAsString(), ex);
+        }
     }
 
     @Override
@@ -92,14 +103,13 @@ public class UserServiceImpl implements UserService {
                         .scheme("http")
                         .host("localhost")
                         .port(8083)
-                        .path("/api/cards/{cardId}") // PathVariable-ı burada təyin edirik
-                        .queryParam("userId", userId) // QueryParam-ı isə burada
-                        .build(cardId)) // .build() metodu {cardId} yerinə dəyəri qoyur
+                        .path("/api/cards/{cardId}")
+                        .queryParam("userId", userId)
+                        .build(cardId))
                 .retrieve()
                 .toBodilessEntity()
-                .block(); // block() ResponseEntity<Void> qaytarır, onu return etməyə ehtiyac yoxdur.
+                .block();
     }
-
 
 
     public UserResponse updateInfo(Long id, UpdateUserInfoRequest request) {

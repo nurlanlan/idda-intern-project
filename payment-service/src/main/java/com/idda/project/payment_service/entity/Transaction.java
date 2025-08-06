@@ -3,6 +3,7 @@ package com.idda.project.payment_service.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,7 +31,7 @@ public class Transaction {
     private int quantity;
 
     @Column(nullable = false)
-    private float amount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private LocalDateTime transactionTimestamp;

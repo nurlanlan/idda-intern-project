@@ -33,7 +33,7 @@ public class UserController {
     @PatchMapping("/me/profile")
     public ResponseEntity<UserResponse> updateMyProfile(
             @RequestHeader("X-User-Id") Long userId,
-            @RequestBody UpdateUserInfoRequest request
+            @RequestBody @Valid UpdateUserInfoRequest request
     ) {
         return ResponseEntity.ok(userService.updateInfo(userId, request));
     }

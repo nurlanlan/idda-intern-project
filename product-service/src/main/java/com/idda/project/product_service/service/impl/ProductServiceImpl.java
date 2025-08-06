@@ -3,6 +3,8 @@ package com.idda.project.product_service.service.impl;
 import com.idda.project.product_service.dto.request.DecreaseStockRequest;
 import com.idda.project.product_service.dto.response.ProductResponse;
 import com.idda.project.product_service.entity.Product;
+import com.idda.project.product_service.exception.InsufficientStockException;
+import com.idda.project.product_service.exception.ProductNotFoundException;
 import com.idda.project.product_service.repository.ProductRepository;
 import com.idda.project.product_service.service.ProductService;
 import jakarta.transaction.Transactional;
@@ -37,16 +39,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse getProductById(long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + productId));
         return convertToDTO(product);
     }
 
     @Override
     @Transactional
     public void decreaseProductStock(DecreaseStockRequest request) {
+        if (!productRepository.existsById(request.getProductId())) {
+            throw new ProductNotFoundException("Product not found with id: " + request.getProductId());
+        }
         int updatedRows = productRepository.decreaseStock(request.getProductId(), request.getQuantity());
         if (updatedRows == 0) {
-            throw new RuntimeException("Failed to decrease stock, not enough items for product id: " + request.getProductId());
+            throw new InsufficientStockException(
+                    "Insufficient stock for product with id: " + request.getProductId());
         }
     }
 

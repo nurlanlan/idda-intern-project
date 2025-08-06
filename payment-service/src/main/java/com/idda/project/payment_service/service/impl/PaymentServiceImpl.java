@@ -10,10 +10,13 @@ import com.idda.project.payment_service.dto.response.TransactionResponse;
 import com.idda.project.payment_service.entity.Transaction;
 import com.idda.project.payment_service.repository.TransactionRepository;
 import com.idda.project.payment_service.service.PaymentService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,12 +25,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
 
     private final TransactionRepository transactionRepository;
     private final WebClient.Builder webClientBuilder;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactionHistory(Long userId) {
         List<Transaction> transactions = transactionRepository.findByUserIdOrderByTransactionTimestampDesc(userId);
 
@@ -37,38 +42,50 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
+    @Transactional // Bu metod bir çox addımdan ibarət olduğu üçün transactional olmalıdır
     public PurchaseResponseDTO processPurchase(PurchaseRequestDTO request) {
+        // TRY-CATCH BLOKLARI ARTIQ YOXDUR!
+        // Əgər aşağıdakı WebClient çağırışlarından hər hansı biri 4xx və ya 5xx xətası alsa,
+        // WebClientResponseException atılacaq və bu, birbaşa bizim GlobalExceptionHandler tərəfindən tutulacaq.
+
+        // --- ADDIM 1: MƏLUMATLARIN TOPLANMASI VƏ YOXLANIŞI ---
+
+        // 1.1. Product Service-dən məhsul məlumatlarını alırıq.
         ProductDTO product = webClientBuilder.build().get()
                 .uri("http://localhost:8084/api/products/{id}", request.getProductId())
                 .retrieve()
                 .bodyToMono(ProductDTO.class)
                 .block();
 
-        if (product == null) {
-            throw new RuntimeException("Product not found");
-        }
+        // 1.2. Stok yoxlanışı (bu, biznes məntiqidir və burada qalmalıdır).
         if (product.getStock() < request.getQuantity()) {
-            throw new RuntimeException("Insufficient stock for product: " + product.getProductName());
+            // Stok yoxdursa, dərhal 409 Conflict statusu ilə xəta atırıq.
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient stock for product: " + product.getProductName());
         }
 
+        // 1.3. Card Service-dən kart məlumatlarını alırıq.
         CardDTO card = webClientBuilder.build().get()
-                .uri("http://localhost:8083/api/cards/{id}?userId={userId}", request.getCardId(), request.getUserId())
+                .uri("http://localhost:8083/api/cards/{id}", uriBuilder -> uriBuilder
+                        .queryParam("userId", request.getUserId()).build(request.getCardId()))
                 .retrieve()
                 .bodyToMono(CardDTO.class)
                 .block();
-        if (card == null || !card.isActive()) {
-            throw new RuntimeException("Card not found or inactive");
+
+        if (!card.isActive()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Card is not active.");
         }
 
-        BigDecimal totalAmount = product.getPrice()
-                .multiply(BigDecimal.valueOf(request.getQuantity()));
-
+        // 1.4. Balans yoxlanışı.
+        BigDecimal totalAmount = product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity()));
         if (card.getBalance().compareTo(totalAmount) < 0) {
-            throw new RuntimeException("Insufficient funds on the card!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Insufficient funds on the card!");
         }
 
+        // --- ADDIM 2: ƏMRLƏRİN İCRASI (SAGA-nın sadə versiyası) ---
+        // Bu addımda xəta baş verərsə, GlobalExceptionHandler onu tutacaq.
+        // Daha mürəkkəb sistemlərdə burada kompensasiya edici tranzaksiyalar olmalıdır.
 
+        // Balansı azaltmaq üçün Card Service-i çağırırıq.
         webClientBuilder.build().post()
                 .uri("http://localhost:8083/api/cards/debit")
                 .bodyValue(new DebitRequest(request.getCardId(), totalAmount))
@@ -76,6 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .toBodilessEntity()
                 .block();
 
+        // Stoku azaltmaq üçün Product Service-i çağırırıq.
         webClientBuilder.build().post()
                 .uri("http://localhost:8084/api/products/decrease-stock")
                 .bodyValue(new DecreaseStockRequest(request.getProductId(), request.getQuantity()))
@@ -83,6 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .toBodilessEntity()
                 .block();
 
+        // --- ADDIM 3: TRANZAKSİYANIN QEYDİ ---
         Transaction transaction = new Transaction();
         transaction.setUserId(request.getUserId());
         transaction.setProductId(request.getProductId());
@@ -94,6 +113,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
+        // --- ADDIM 4: UĞURLU CAVABIN QAYTARILMASI ---
         return new PurchaseResponseDTO(
                 savedTransaction.getId(),
                 "SUCCESS",

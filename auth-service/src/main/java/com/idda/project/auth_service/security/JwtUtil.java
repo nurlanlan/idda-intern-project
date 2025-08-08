@@ -80,4 +80,8 @@ public class JwtUtil {
         final String emailFromToken = extractEmail(token);
         return (emailFromToken.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
+
+    public long getRefreshTokenExpirationMs() {
+        return refreshTokenExpiration;
+    }
 }

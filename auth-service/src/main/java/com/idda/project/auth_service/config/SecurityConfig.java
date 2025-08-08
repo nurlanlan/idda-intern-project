@@ -31,11 +31,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // İlk olaraq biznes məntiqinə aid public endpointlərə icazə veririk
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Sonra Swagger-ə aid bütün endpointlərə icazə veririk
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                        // Yuxarıda sadalananlar xaricindəki BÜTÜN digər sorğular autentikasiya tələb etsin
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

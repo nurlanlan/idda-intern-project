@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
-
+//
         String accessToken = jwtUtil.generateToken(user, true);
         String refreshToken = jwtUtil.generateToken(user, false);
 

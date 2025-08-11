@@ -98,7 +98,7 @@ public class JwtUtil {
                     .parseClaimsJws(refreshToken);
             return true;
         } catch (Exception e) {
-            return false; // Token is invalid or expired
+            return false;
         }
     }
 }

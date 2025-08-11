@@ -84,4 +84,21 @@ public class JwtUtil {
     public long getRefreshTokenExpirationMs() {
         return refreshTokenExpiration;
     }
+
+    public Long extractUserIdFromToken(String refreshToken) {
+        Claims claims = extractAllClaims(refreshToken);
+        return claims.containsKey("userId") ? Long.valueOf(claims.get("userId").toString()) : null;
+    }
+
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(refreshToken);
+            return true;
+        } catch (Exception e) {
+            return false; // Token is invalid or expired
+        }
+    }
 }

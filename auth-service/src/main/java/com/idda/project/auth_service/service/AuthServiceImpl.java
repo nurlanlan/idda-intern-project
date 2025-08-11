@@ -109,5 +109,6 @@ public class AuthServiceImpl implements AuthService {
         redisTemplate.delete(redisKey);
         log.info("User {} logged out, refresh token revoked.", userId);
     }
+
 }
 

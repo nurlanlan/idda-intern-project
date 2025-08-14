@@ -84,11 +84,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public LoginResponse refreshToken(String refreshToken) {
-        if (!jwtUtil.validateRefreshToken(refreshToken)) { // JwtUtil-ə yeni bir metod əlavə edəcəyik
+        if (!jwtUtil.validateRefreshToken(refreshToken)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token is invalid or expired");
         }
 
-        Long userId = jwtUtil.extractUserIdFromToken(refreshToken); // JwtUtil-ə yeni bir metod əlavə edəcəyik
+        Long userId = jwtUtil.extractUserIdFromToken(refreshToken);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found for this token"));
 
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
 
         String newAccessToken = jwtUtil.generateToken(user, true);
 
-        return new LoginResponse(newAccessToken, refreshToken); // Sadə versiya
+        return new LoginResponse(newAccessToken, refreshToken);
     }
 
     public void logout(Long userId) {
